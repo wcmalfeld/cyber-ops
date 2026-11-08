@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Nav } from "@/components/nav";
 import { Meter } from "@/components/ui";
 import { db } from "@/db";
@@ -21,9 +22,17 @@ export default async function AppLayout({ children }: { children: React.ReactNod
             </div>
             <p className="t-micro text-teal">{rank.name}</p>
             <Meter value={rank.progress} label={`Progress to ${rank.next?.name ?? "max rank"}`} />
-            <form action={logout}>
-              <button className="t-micro text-muted hover:text-ink underline underline-offset-2">Sign out</button>
-            </form>
+            {user.isGuest ? (
+              <div className="space-y-2 pt-1">
+                <p className="t-micro text-muted">Guest session: progress lives on this browser only.</p>
+                <Link href="/save" className="btn btn-primary w-full">Save progress</Link>
+                <Link href="/login" className="block t-micro text-muted hover:text-ink underline underline-offset-2">Sign in to an existing account</Link>
+              </div>
+            ) : (
+              <form action={logout}>
+                <button className="t-micro text-muted hover:text-ink underline underline-offset-2">Sign out</button>
+              </form>
+            )}
           </div>
         }
       />

@@ -16,14 +16,16 @@ npm run db:setup                  # migrate + seed content
 npm run dev                       # http://localhost:3000
 ```
 
-Create an account at `/register`. Mission 1 is recommended first.
+Click **Play now as guest** on the landing page to jump straight into Mission 1, or create an account at `/register`. Guests can save their progress to an account at any time from the sidebar.
 
 | Script | What it does |
 |---|---|
 | `npm run dev` / `build` / `start` | Next.js dev server, production build, production server |
 | `npm test` | Unit + integration tests (Vitest; integration uses `TEST_DATABASE_URL`) |
+| `node tests/e2e/guest.mjs` | Browser test of guest play → save progress (same env vars as `e2e`) |
 | `npm run e2e` | Browser smoke test through the real UI (needs a running server and Chrome; `BASE_URL`, `CHROME` env vars) |
 | `node tests/e2e/security.mjs` | Answer-leakage scan of rendered pages + API guard probes |
+| `npm run db:prune-guests` | Delete guest accounts with no live session (run daily from cron in production) |
 | `npm run db:migrate` / `db:seed` | Apply migrations / validate and load content. `SEED_ALLOW_OVERWRITE=1` replaces an unchanged-version mission in development |
 | `npm run typecheck` / `lint` | TypeScript and ESLint |
 
@@ -31,6 +33,7 @@ Create an account at `/register`. Mission 1 is recommended first.
 
 **Fully functional**
 - Accounts (bcrypt, server-side sessions), persistent progress, resume where you left off.
+- Guest play: one click, no sign-up; a guest can later claim the same user row as a full account, keeping all progress.
 - Mission engine driven entirely by data: missions are validated definitions stored as versioned rows; no mission has its own page or code.
 - Six objective types: flag, text answer, single/multi choice, evidence selection (mark log rows), timeline ordering, and terminal observation (auto-solved from what you actually do in the shell).
 - **Simulated terminal**: a controlled interpreter over each mission's synthetic filesystem — `ls -la`, `cd`, `cat`, `grep -rinvc`, `find`, `chmod`, `ps`, `strings`, `file`, `stat`, pipes, globbing, real permission checks. State (cwd, chmod changes) is held server-side per user.

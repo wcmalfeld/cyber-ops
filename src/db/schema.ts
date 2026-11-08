@@ -6,6 +6,7 @@
 import { sql } from "drizzle-orm";
 import {
   boolean,
+  check,
   index,
   integer,
   jsonb,
@@ -22,12 +23,17 @@ const createdAt = () => timestamp("created_at", { withTimezone: true }).notNull(
 
 // ── identity ───────────────────────────────────────────────────────────────
 
+/**
+ * Guests (`isGuest`) have no email or password: they play under a session cookie only
+ * and can later claim the same row as a full account, keeping all progress.
+ */
 export const users = pgTable("users", {
   id: uuid("id").primaryKey().defaultRandom(),
-  email: text("email").notNull().unique(),
-  passwordHash: text("password_hash").notNull(),
+  email: text("email").unique(),
+  passwordHash: text("password_hash"),
+  isGuest: boolean("is_guest").notNull().default(false),
   createdAt: createdAt(),
-});
+}, (t) => [check("users_credentials_unless_guest", sql`${t.isGuest} OR (${t.email} IS NOT NULL AND ${t.passwordHash} IS NOT NULL)`)]);
 
 export const userProfiles = pgTable("user_profiles", {
   userId: uuid("user_id").primaryKey().references(() => users.id, { onDelete: "cascade" }),

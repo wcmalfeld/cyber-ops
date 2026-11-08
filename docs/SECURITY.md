@@ -14,6 +14,7 @@
 | Sessions | 32 random bytes, httpOnly, Secure in production, 30-day expiry; DB stores SHA-256 only; logout deletes the row | auth test |
 | Passwords | bcrypt cost 12, ≥10 chars; constant-time path for unknown emails | auth test |
 | Terminal | No process execution; pure interpreter over synthetic data; redirection/chaining/substitution rejected; input 500 chars, output 64 KB; grep patterns length-capped and nested quantifiers refused (ReDoS) | `tests/unit/terminal.test.ts` |
+| Guest accounts | Created only by an explicit Server Action (not on page load, so crawlers don't mint users); 10/h per IP; claiming is an in-place `UPDATE … WHERE is_guest` with session rotation; DB CHECK requires email+password on non-guests; stale guests pruned by `npm run db:prune-guests` | `tests/integration/guest.test.ts`, `tests/e2e/guest.mjs` |
 | Input validation | Zod on every API body; 16 KB body cap | security smoke (400) |
 | Headers | nosniff, frame DENY, strict referrer, restrictive Permissions-Policy, no X-Powered-By | `next.config.ts` |
 | Data | All organizations, people, IPs (RFC 1918/5737) and credentials are synthetic | content review |

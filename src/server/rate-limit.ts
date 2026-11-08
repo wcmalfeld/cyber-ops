@@ -12,6 +12,7 @@ export const LIMITS = {
   hint: { limit: 30, windowMs: 60_000 },
   login: { limit: 8, windowMs: 15 * 60_000 },
   register: { limit: 5, windowMs: 60 * 60_000 },
+  guest: { limit: 10, windowMs: 60 * 60_000 },
 } as const;
 
 export function rateLimit(key: string, { limit, windowMs }: { limit: number; windowMs: number }, now = Date.now()) {

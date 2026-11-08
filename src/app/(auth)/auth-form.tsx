@@ -3,9 +3,9 @@ import Link from "next/link";
 import { useActionState } from "react";
 import type { AuthState } from "./actions";
 
-export function AuthForm({ mode, action }: { mode: "login" | "register"; action: (s: AuthState, f: FormData) => Promise<AuthState> }) {
+export function AuthForm({ mode, action }: { mode: "login" | "register" | "claim"; action: (s: AuthState, f: FormData) => Promise<AuthState> }) {
   const [state, formAction, pending] = useActionState(action, {});
-  const isRegister = mode === "register";
+  const isRegister = mode !== "login";
   return (
     <form action={formAction} className="space-y-4" noValidate>
       {isRegister && (
@@ -28,15 +28,15 @@ export function AuthForm({ mode, action }: { mode: "login" | "register"; action:
         </p>
       )}
       <button className="btn btn-primary w-full" disabled={pending}>
-        {pending ? "Working…" : isRegister ? "Create account" : "Sign in"}
+        {pending ? "Working…" : mode === "claim" ? "Save progress" : isRegister ? "Create account" : "Sign in"}
       </button>
-      <p className="t-small text-muted">
+      {mode !== "claim" && <p className="t-small text-muted">
         {isRegister ? (
           <>Already training? <Link className="link" href="/login">Sign in</Link></>
         ) : (
           <>New here? <Link className="link" href="/register">Create an account</Link></>
         )}
-      </p>
+      </p>}
     </form>
   );
 }

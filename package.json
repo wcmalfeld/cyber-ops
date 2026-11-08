@@ -14,6 +14,7 @@
     "db:migrate": "drizzle-kit migrate",
     "db:seed": "tsx --env-file-if-exists=.env --tsconfig tsconfig.json scripts/seed.ts",
     "db:setup": "npm run db:migrate && npm run db:seed",
+    "db:prune-guests": "tsx --env-file-if-exists=.env --tsconfig tsconfig.json scripts/prune-guests.ts",
     "e2e": "node tests/e2e/smoke.mjs"
   },
   "dependencies": {

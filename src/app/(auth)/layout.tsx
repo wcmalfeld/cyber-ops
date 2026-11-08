@@ -2,7 +2,9 @@ import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/server/auth";
 
 export default async function AuthLayout({ children }: { children: React.ReactNode }) {
-  if (await getCurrentUser()) redirect("/");
+  // Guests may still reach /login to switch to an existing account.
+  const user = await getCurrentUser();
+  if (user && !user.isGuest) redirect("/");
   return (
     <main className="min-h-dvh grid lg:grid-cols-[1.1fr_1fr]">
       <section className="hidden lg:flex flex-col justify-between p-12 bg-term border-r border-rule">
